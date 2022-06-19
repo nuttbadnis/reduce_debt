@@ -1,0 +1,397 @@
+﻿<%@ Master Language="VB" CodeFile="MasterPageMenu.master.vb" Inherits="MasterPageMenu" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <link rel="icon" type="image/png" href="Images/icons8-NFC F-96.png" />
+    <title>Feasibility Project</title>
+     <!--Style-->
+        <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge"  />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <link rel="stylesheet" href="App_Inc/bootstrap/4.5.0/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/feasibility.css?v=1" /> 
+
+        <script type="text/javascript" src="App_Inc/bootstrap/4.5.0/js/jquery-3.5.1.slim.min.js"></script>
+        <%-- <script type="text/javascript" src="App_Inc/jquery/jquery-3.4.1.js"></script> --%>
+        <script type="text/javascript" src="App_Inc/jquery/jquery-3.5.1.js"></script>
+        <script type="text/javascript" src="App_Inc/bootbox/5.4.0/bootbox.min.js"></script>
+        <script type="text/javascript" src="App_Inc/bootstrap/4.5.0/js/popper.min.js"></script>
+        <script type="text/javascript" src="App_Inc/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+        
+        <link rel="stylesheet" href="App_Inc/datatable/1.10.21/css/jquery.dataTables.min.css" />
+        <script type="text/javascript" src="App_Inc/datatable/1.10.21/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="App_Inc/datatable/date-uk.js"></script>
+ 
+    <!-- AutoComplete -->
+        <link rel="stylesheet" type="text/css" href="App_Inc/jquery-ui-1.12.1/jquery-ui-1.12.1.css" />
+    <!-- TypeError: $(...)..autocomplete is not a function -->
+         <script type="text/javascript" src="App_Inc/jquery-ui-1.12.1/jquery-ui-1.12.1.js"></script>
+    <!-- AutoComplete -->   
+
+        <!--Style-->
+        
+        <!-- Style Panu -->
+        <link type="text/css" rel="stylesheet" href="App_Inc/_css/reset.css" />
+
+	<!--    <script type="text/javascript" src="App_Inc/jquery-1.11.3.min.js"></script>-->
+
+<%--	    <link rel="stylesheet" type="text/css" href="App_Inc/jquery-ui-1.11.4/jquery-ui.css"/>
+	    <script type="text/javascript" src="App_Inc/jquery-ui-1.11.4/jquery-ui.js"></script>--%>
+
+	    <!--<link rel="stylesheet" href="App_Inc/bootstrap/css/bootstrap.css" />
+	    <script type="text/javascript" src="App_Inc/bootstrap/js/bootstrap.js"></script>-->
+
+   <%--     <link rel="stylesheet" type="text/css" href="App_Inc/DataTables/datatables.css"/>
+        <script type="text/javascript" src="App_Inc/DataTables/datatables.js"></script>
+
+	    <link type="text/css" rel="stylesheet" href="App_Inc/_css/gly-spin.css" />--%>
+	<link type="text/css" rel="stylesheet" href="App_Inc/_css/main.css?v=3" /> 
+<%--	    <link type="text/css" rel="stylesheet" href="App_Inc/_css/pagedata.css?v=3" />--%>
+
+<%--        <script type="text/javascript" src="App_Inc/_js/panu.js?v=3"></script>
+        <script type="text/javascript" src="App_Inc/_js/load_modal.js?v=3"></script>--%>
+        <!-- Style Panu -->
+        
+        <!-- Datepicker Jquery -->
+        <link rel="stylesheet" type="text/css" href="App_Inc/datepicker/0.6.5/datepicker.css" />
+        <script type="text/javascript" src="App_Inc/datepicker/0.6.5/datepicker.js"></script>
+<%--    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/datetimepicker@latest/dist/DateTimePicker.min.css" />
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/datetimepicker@latest/dist/DateTimePicker.min.js"></script>--%>
+<%--        <link rel="stylesheet" href="App_Inc/jquerytimepicker/dist/DateTimePicker.css">--%>
+<%--        <script src="//code.jquery.com/jquery.min.js"></script>--%>
+<%--        <script src="App_Inc/jquerytimepicker/dist/DateTimePicker.js"></script>--%>
+<%--        <script src="App_Inc/jquerytimepicker/dist/i18n/DateTimePicker-i18n.js"></script>
+        <script src="App_Inc/jquerytimepicker/dist/i18n/DateTimePicker-i18n-de.js"></script>--%>
+        <!-- Datepicker Jquery -->
+
+        <script type="text/javascript" src="App_Inc/jspdf/jspdf.min.js"></script>   
+        <script type="text/javascript" src="App_Inc/jspdf/jspdf.js"></script>
+        <script type="text/javascript" src="App_Inc/jspdf/pdfFromHTML.js"></script>
+
+        <%-- <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.js"></script>--%>
+        <%-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>--%>
+       
+        <!-- Bootstrap DatePicker -->
+<%--            <link rel="stylesheet" type="text/css" href="App_Inc/bootstrap_datetime/bootstrap-datepicker.css"/>
+            <script type="text/javascript" src="App_Inc/bootstrap_datetime/bootstrap-datepicker.js"></script>--%>
+        <!-- Bootstrap DatePicker -->
+
+        <!-- Sidebar -->
+<%--            <link rel="stylesheet" href="assets/css/sidebar/jquery.mCustomScrollbar.min.css">
+            <link rel="stylesheet" href="assets/css/sidebar/animate.css">
+            <script src="App_Inc/_js/jquery.mCustomScrollbar.concat.min.js"></script>
+            <script src="App_Inc/_js/waypoints.min.js"></script>
+            <script src="App_Inc/_js/jquery.backstretch.min.js"></script>
+            <script src="App_Inc/_js/wow.min.js"></script>--%>
+            <link rel="stylesheet" href="App_Inc/_css/style_sidebar.css?v=3">
+            <script src="App_Inc/_js/scripts_sidebar.js?v=5"></script>
+        <!-- Sidebar -->
+
+       <%--<link rel="stylesheet" href="assets/css/sidebar/media-queries.css">--%>
+        <!-- Font Awesome -->
+            <link rel="stylesheet" type="text/css" href="App_Inc/_css/fontawesome/all.css"/>
+        <!-- Font Awesome -->
+        <!-- Font Family -->
+            <!-- Font English -->
+            <link href="https://fonts.googleapis.com/css?family=Fredoka+One&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Righteous&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Spartan&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+            <!-- Font Thai -->
+            <link href="https://fonts.googleapis.com/css?family=Sarabun&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Thasadith&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Kanit&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Bai+Jamjuree&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Krub&display=swap" rel="stylesheet">
+        <!-- Font Family -->
+        <script src="App_Inc/_js/feasibility_js.js?v=1"></script>
+
+</head>
+
+<body style="padding-right:0px !important;font-family: Bai Jamjuree;font-size:14px;">
+ <style>
+    /*.page-gridview td table tbody tr{
+        background: white;
+        color: #107763;
+        font-size: 20px;       
+    }*/
+    .page-gridview td  {
+        border: 0;
+        padding: 10px 0px 10px 0px; 
+    }
+    .page-gridview a, .page-gridview a:visited
+    {
+        text-decoration: none;
+        padding: 0.75rem;
+        white-space: nowrap;
+        color:#FFF;
+    }
+    .page-gridview span
+    {
+        padding: 0.75rem;
+        /*border: solid 1px #579f91;*/
+        background: #3f9282;
+        color:#FFF;
+    }
+     .page-gridview a:hover,.page-gridview a:active{
+        padding: 0.75rem;
+        border: solid 1px #579f91;
+        background: #3f9282;
+        color:#FFF;
+        text-decoration: none;
+        white-space: nowrap;
+     }
+     .page-gridview table {
+        margin-right: 10px;
+     }
+     <%-- .table-striped tbody tr:nth-of-type(odd), .table-hover tbody tr:hover {
+        background: #107763;
+     } --%>
+     .form-control, .input-group-text{
+        font-size:14px;
+     }
+     .table th,.table td{
+        padding: 0.25rem;
+     }
+     .popover{
+        background: #f1f1f1 !important;
+        color:white !important;
+     }
+     .popover .arrow:after {
+        border-right-color:#f1f1f1;
+        color:#fff !important;
+     }
+     .list-group-item > i{
+         font-size: 22px;
+     }
+    /*.page-gridview > td ::after span { background: #ffffff!important; }*/
+ </style>
+    <form id="form1" runat="server">
+        <input id="hide_user_master" type="hidden" runat="server" value="0" /> 
+<%--    <nav class="navbar navbar-default navbar-fixed-top" style="margin-bottom: 0px;margin-left: -2px;margin-right: -2px;">--%>
+<%--        <header class="navbar navbar-expand navbar-default flex-column flex-md-row bd-navbar fixed-top">
+    	<div class="container-fluid" >
+    		<div class="navbar-header">
+    			<a class="navbar-brand" href="approve_list.aspx?menu=approve">FEASIBILITY</a>
+    		</div>
+    		<div class="nav navbar-nav navbar-right" style="padding-top:0.5%;padding-right:1%;">--%>
+
+<%--    		</div>
+    	</div>
+        </header>--%>
+<%--    </nav>--%>
+   
+   
+    <!--<div class="container-fluid">
+    <div class="row">
+ 
+    <div class="col-md-2 sidebar">
+      <h3>LEFT BODY</h3>  
+        <div class="list-group">
+
+        </div>
+    </div>-->
+
+<%--       <nav class="navbar navbar-default navbar-fixed-top" style="width: 13.5%;position: fixed;height: 100%;top: 51px;background: #eee;">--%>
+<%--        <div class="container-fluid">
+            <div class="row flex-xl-nowrap">--%>
+<%--            <div class="col-md-3 col-xl-2 bd-sidebar">--%>
+               <%--<div class="col-md-12">--%>
+<%--                   <nav class="bd-links">
+ 			            <div class="list-group" style="margin-top: 10%;">
+                            <a id="Create" runat="server" href="add_capex.aspx?menu=create" class="list-group-item active">Create Project</a>
+                            <a id="Edit" runat="server" href="edit_list.aspx?menu=edit" class="list-group-item">Edit Project</a>
+                            <a id="CheckStatus" runat="server" href="check_status_list.aspx?menu=check" class="list-group-item">Check Status</a>
+                            <a id="ContractFile" visible="false" runat="server" href="project_contract.aspx?menu=contract" class="list-group-item">Contract File</a>
+                            <a id="Approve" runat="server" href="approve_list.aspx?menu=approve" class="list-group-item">Approve Project</a>
+                            <a id="Insert" runat="server" href="insert_capex.aspx?menu=insert" class="list-group-item">Insert Data</a>
+        	            </div>
+                    </nav>--%>
+               <%--</div>--%>
+<%--            </div>--%>
+           
+            <!-- Sidebar -->
+            <nav class="sidebar active bg-mint">
+                <div id="sm_button" class="dismiss">
+					<i class="fas fa-arrow-left" style="line-height:inherit;"></i>
+				</div>
+                <!-- close sidebar menu -->
+
+                <div class="d-flex flex-column">
+                    <div class="pt-4 pb-4 pl-2 pr-2 bg-mint" style="font-family: 'Montserrat';font-size:18px;">  
+                        <a href="Default.aspx" class="text-white border-bottom-0 ">
+                            FEASIBILITY
+                        </a>
+                    </div>
+                  <%--  <hr size="1" class="bg-white" />--%>
+                    <div class="pt-4 pb-4 pl-2 pr-2 bg-mint">  
+                        <asp:LinkButton ID="lblUser" runat="server" class="btn btn-sm btn-warning float-left"></asp:LinkButton>
+                    </div>
+<%--                <ul class="list-unstyled menu-elements">
+                    <li class="active">
+                       <a id="Create" runat="server" href="add_capex.aspx?menu=create">Create Project</a>
+                    </li>
+                    <li>
+                        <a id="Edit" runat="server" href="edit_list.aspx?menu=edit">Edit Project</a>
+                    </li>
+                    <li>
+                        <a id="CheckStatus" runat="server" href="check_status_list.aspx?menu=check">Check Status</a>
+                    </li>
+                    <li>
+                        <a id="ContractFile" visible="false" runat="server" href="project_contract.aspx?menu=contract" class="list-group-item">Contract File</a>
+                    </li>
+                    <li>
+                        <a id="Approve" runat="server" href="approve_list.aspx?menu=approve">Approve Project</a>
+                    </li>
+                    <li>
+                        <a id="Insert" runat="server" href="insert_capex.aspx?menu=insert">Insert Data</a>
+                    </li>
+                </ul>--%>
+                    <div class="bg-mint border-bottom border-top" style="font-size:16px;font-family:Raleway;line-height:1;">
+                        <div class="list-group">
+                            <a id="Create" runat="server" href="project_name.aspx?menu=create" class="list-group-item active rounded-0"><i class="fas fa-file-medical"></i> Create</a>
+                            <a id="Upload" runat="server" href="project_name.aspx?menu=upload" class="list-group-item rounded-0"><i class="fas fa-upload"></i> Upload</a>
+                            <a id="Edit" runat="server" href="edit_list.aspx?menu=edit" class="list-group-item rounded-0">
+                                <i class="fas fa-pen-square"></i> Edit & Draft</a>
+                            <a id="CheckStatus" runat="server" href="check_status_list.aspx?menu=check" class="list-group-item rounded-0" style="left: 0px; top: 0px"><i class="fas fa-list-ul"></i> List & Status</a>
+                            <a id="ContractFile" visible="false" runat="server" href="project_contract.aspx?menu=contract" class="list-group-item rounded-0">Contract File</a>
+                            <a id="Approve" runat="server" href="approve_list.aspx?menu=approve" class="list-group-item rounded-0"><i class="fas fa-clipboard-check"></i> Approve</a>
+                            <a id="Insert" runat="server" href="insert_capex.aspx?menu=insert" class="list-group-item rounded-0">
+                                <i class="fas fa-address-book"></i> Setting Data</a>
+                        </div>
+                    </div>
+                    <div class="pl-2 bg-mint text-white text-center" style="position:absolute;left:0;bottom:20px;line-height:2;">
+                        <!--<p class="mb-0">Copyright © 2016 by</p>-->
+                        <a class="btn btn-sm text-white" style="background:#3f9282;font-size:10px;" href="mailto:support_pos@jasmine.com">support_pos@jasmine.com</a>
+			            <p class="mb-0" style="font-size:10px;">เพื่อการใช้งานเต็มประสิทธิภาพ</p>
+                        <p class="mb-1" style="font-size:10px;">กรุณาใช้ Chrome หรือ Firefox</p>
+                    </div>
+                </div>
+            </nav>
+<!-- End sidebar -->
+<!-- Sidebar-small -->
+            <nav class="sidebar-sm bg-mint">
+                <div class="d-flex flex-column">
+                    <div class="bg-mint border-bottom border-top" style="font-size:16px;font-family:Raleway;">
+                        <div class="list-group">
+                            <a id="Create_sm" runat="server" href="project_name.aspx?menu=create"
+                                data-toggle="popover" data-trigger="hover" data-content="Create"
+                                class="list-group-item active rounded-0">
+                                <i class="fas fa-file-medical"></i>
+                            </a>
+                            <a id="Upload_sm" runat="server" href="project_name.aspx?menu=upload" 
+                                data-toggle="popover" data-trigger="hover" data-content="Upload"
+                                class="list-group-item rounded-0">
+                                <i class="fas fa-upload"></i>
+                            </a>
+                            <a id="Edit_sm" runat="server" href="edit_list.aspx?menu=edit" 
+                                data-toggle="popover" data-trigger="hover" data-content="Edit"
+                                class="list-group-item rounded-0">
+                                <i class="fas fa-pen-square"></i>
+                            </a>
+                            <a id="CheckStatus_sm" runat="server" href="check_status_list.aspx?menu=check" 
+                                data-toggle="popover" data-trigger="hover" data-content="List & Status"
+                                class="list-group-item rounded-0" style="left: 0px; top: 0px">
+                                <i class="fas fa-list-ul"></i>
+                            </a>
+                            <a id="ContractFile_sm" visible="false" runat="server" href="project_contract.aspx?menu=contract" 
+                                data-toggle="popover" data-trigger="hover" data-content="Contract File"
+                                class="list-group-item rounded-0">
+                            </a>
+                            <a id="Approve_sm" runat="server" href="approve_list.aspx?menu=approve" 
+                                data-toggle="popover" data-trigger="hover" data-content="Approve"
+                                class="list-group-item rounded-0">
+                                <i class="fas fa-clipboard-check"></i>
+                            </a>
+                            <a id="Insert_sm" runat="server" href="insert_capex.aspx?menu=insert" 
+                                data-toggle="popover" data-trigger="hover" data-content="Insert"
+                                class="list-group-item rounded-0">
+                                <i class="fas fa-address-book"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+<!-- End sidebar-small -->
+                <!-- open sidebar menu -->
+				<a id="main_button" class="btn btn-primary btn-customized open-menu"
+                runat="server">
+                    <i class="fas fa-align-left"></i> <span></span>
+                </a>
+<%--            <div class="col-md-9 col-xl-8 py-md-3 pl-md-5 bd-content" role="main">
+                <div class="container" style="margin-top: 50px;margin-left: -28px;">
+                    <div class="row">--%>
+
+                        <div class="container-fluid">
+			                <div class="row justify-content-end">
+			                    <div class="body-sidebar">
+                                    <div class="col-md-12 pl-0 mb-4" style="font-size:14px !important;">
+                                        <asp:contentplaceholder id="ContentPlaceHolder1" runat="server">
+                                        </asp:contentplaceholder>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<%--                    </div>
+                </div>
+            </div>--%>
+
+<%--        </div>
+        </div>--%>
+
+<%--    </nav>--%>
+       <asp:ScriptManager ID="ScriptManager1" runat="server" AsyncPostBackTimeout="400"></asp:ScriptManager>
+        <asp:ContentPlaceHolder ID="ScriptContent" runat="server"></asp:ContentPlaceHolder>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('[data-toggle="popover"]').popover();   
+            });
+        </script>
+    </form>
+
+<%--    <div class="container pull-right">
+			<span id="top-link-block">
+				<a class="btn btn-default" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">
+					<i class="glyphicon glyphicon-chevron-up"></i>
+				</a>
+			</span>
+		</div>   --%>
+	
+<%--   <footer class="footer">
+	<div class="container">
+		<div class="pull-left"> --%>
+<%--            <footer class="footer-container">		
+                <div class="container">
+                <div class="row">		
+                    <div class="col">
+			            <p>Copyright © 2016 by <a href="mailto:support_pos@jasmine.com">support_pos@jasmine.com</a></p>
+			            <p>เพื่อการใช้งานเต็มประสิทธิภาพ กรุณาใช้เบราว์เซอร์ Chrome หรือ Firefox</p>
+                    </div>
+                </div>
+		        </div>
+	        </footer>--%>
+
+		<%-- </div>
+	</div>
+</footer>--%>
+
+
+<%--    <nav class="navbar navbar-default navbar-fixed-bottom" style="font-size: 12px;color: #eee;margin-bottom: -2.5%;">
+    	<div class="container-fluid">
+    	    <div class="navbar-header">
+    	    <div class=col-md-12>Feasibility 2017 v1.02 / Design & Develope By Weraphon.r</div>
+    	    </div>
+    		<div class="nav navbar-nav navbar-right">
+    		<div class=col-md-12>Copyright 2017 by<a href="mailto:support_pos@jasmine.com"> support_pos@jasmine.com</a></div>
+    		</div>
+    	</div>
+    </nav>  --%>
+   </body>
+
+
+</html>
+

@@ -1,0 +1,563 @@
+Imports Microsoft.VisualBasic
+Imports System.Data
+
+Public Class Cls_Calculate
+    Dim C As New Cls_Data
+
+    Public Function GetProfit(ByVal User As String, ByVal Menu As String, ByVal DocNo As String, ByVal Contract As Double, ByVal MonthlyPrice As Double, ByVal OneTimePayment As Double, ByVal Marketing As Double, ByVal EntertainCustomer As Double, ByVal Penalty As Double, ByVal PenaltyLate As Double, ByVal Gift As Double) As DataTable
+        Dim DT As New DataTable
+
+
+        Return DT
+    End Function
+
+    Public Function GetTableService(ByVal User As String, ByVal Menu As String, ByVal DocNo As String) As DataTable
+        Dim strSql As String
+        Dim DT_Service As DataTable
+        If Menu = "Create" Then
+            strSql = "select * from dbo.List_Service where CreateBy='" + User + "' and Document_No is null "
+        Else
+            strSql = "select * from dbo.List_Service where Document_No = '" & DocNo & "' "
+        End If
+
+        DT_Service = C.GetDataTable(strSql)
+        Return DT_Service
+    End Function
+
+    Public Function GetTableProjectName(ByVal User As String, ByVal Menu As String, ByVal DocNo As String) As DataTable
+        Dim strSql As String
+        Dim DT_ProjectName As DataTable
+        If Menu = "Create" Then
+            strSql = "select * from List_ProjectName where CreateBy='" + User + "' and Document_No is null "
+        Else
+            strSql = "select * from List_ProjectName where Document_No = '" & DocNo & "' "
+        End If
+
+        DT_ProjectName = C.GetDataTable(strSql)
+        Return DT_ProjectName
+    End Function
+
+    Public Function CalculateOverMinMax(ByVal Cost_perUnit As Double, ByVal Initial_Costper_Unit As Double, ByVal CustomerType As String) As Boolean
+        Dim strSql As String
+        Dim MinMax As Double = 0
+        Dim DT As New DataTable
+        strSql = "select * from dbo.InternetBWCost BWcost inner join dbo.CustomerType Cus on BWcost.BWCostType = Cus.BWCostType where CustomerType_name = '" & CustomerType & "' "
+        DT = C.GetDataTable(strSql)
+        If DT.Rows.Count > 0 Then
+            MinMax = CDbl(DT.Rows(0).Item("MinMaxDiffCost")) / 100
+        End If
+        If Initial_Costper_Unit = 0 Then
+            Return False
+        ElseIf (Cost_perUnit - Initial_Costper_Unit) / Initial_Costper_Unit > MinMax Or (Cost_perUnit - Initial_Costper_Unit) / Initial_Costper_Unit < (MinMax * (-1)) Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+    Public Function ShowCAPEX_OPEX(ByVal User As String, ByVal Menu As String, ByVal DocNo As String, ByVal DT_Service As DataTable, ByVal CustomerType As String) As DataTable
+        Dim strsql As String
+        Dim DT_CAPEX As DataTable
+        Dim DT_OPEX As DataTable
+        Dim DT_OTHER As DataTable
+        Dim DT_Management As DataTable
+
+        Dim r As String
+        Dim total_capex As Double = 0
+        Dim total_capex_mass As Double = 0
+        Dim total_opex As Double = 0
+        Dim total_other As Double = 0
+        Dim total_management As Double = 0
+        Dim NOC As Double
+        Dim NOCTotalCost As Double
+
+        If DT_Service.Rows.Count > 0 Then
+            NOC = CDbl(DT_Service.Rows(0).Item("NOC"))
+            NOCTotalCost = CDbl(DT_Service.Rows(0).Item("NOC")) * CDbl(DT_Service.Rows(0).Item("NOCCost"))
+        Else
+            NOC = 0
+            NOCTotalCost = 0
+        End If
+
+        If Menu = "Create" Then
+            strsql = "select * from dbo.List_CAPEX where CreateBy='" + User + "' and Document_No is null "
+        Else
+            strsql = "select * from dbo.List_CAPEX where Document_No = '" + DocNo + "' and Status = '1' "
+        End If
+
+        DT_CAPEX = C.GetDataTable(strsql)
+        r = "<table style='width: 100%'>"
+        r += "<tr class='font-weight-bold'>"
+        'r += "<td width='65%' align='left'><b><u>" + txtProjectName.Text + "</u></b></td>"
+        r += "<td width='15%' align='center'><b><u>Asset</u></b></td>"
+        r += "<td width='15%' align='right'><b><u>บาท</u></b></td>"
+        r += "</tr>"
+        For i As Integer = 0 To DT_CAPEX.Rows.Count - 1
+            r += "<tr>"
+            If CalculateOverMinMax(CDbl(DT_CAPEX.Rows(i).Item("Cost_perUnit").ToString), CDbl(DT_CAPEX.Rows(i).Item("Initial_Cost_perUnit").ToString), CustomerType) Then
+                r += "<td style='color: Red'>" + DT_CAPEX.Rows(i).Item("CAPEX_Name").ToString + "</td>"
+                r += "<td align='center' style='color: Red'>" + DT_CAPEX.Rows(i).Item("Asset_Type").ToString + "</td>"
+                r += "<td align='right' style='color: Red'>" + Format(CDbl(DT_CAPEX.Rows(i).Item("Cost").ToString), "###,##0.00") + "</td>"
+            Else
+                r += "<td>" + DT_CAPEX.Rows(i).Item("CAPEX_Name").ToString + "</td>"
+                r += "<td align='center'>" + DT_CAPEX.Rows(i).Item("Asset_Type").ToString + "</td>"
+                r += "<td align='right'>" + Format(CDbl(DT_CAPEX.Rows(i).Item("Cost").ToString), "###,##0.00") + "</td>"
+            End If
+            r += "</tr>"
+            total_capex += DT_CAPEX.Rows(i).Item("Cost")
+        Next
+        r += "</table>"
+        'CAPEX_Detail.InnerHtml = r
+
+        If Menu = "Create" Then
+            strsql = "select * from dbo.List_OPEX where CreateBy='" + User + "' and Document_No is null "
+        Else
+            strsql = "select * from dbo.List_OPEX where Document_No = '" + DocNo + "' and Status = '1' "
+        End If
+
+        DT_OPEX = C.GetDataTable(strsql)
+        r = "<table style='width: 100%'>"
+        r += "<tr class='font-weight-bold'>"
+        r += "<td width='70%' align='left'><u>JASMINE GROUP</u></td>"
+        r += "<td width='15%' align='center'><u>หน่วย<u></td>"
+        r += "<td width='15%' align='right'><u>บาท/เดือน<u></td>"
+        r += "</tr>"
+        For i As Integer = 0 To DT_OPEX.Rows.Count - 1
+            r += "<tr>"
+            If CalculateOverMinMax(CDbl(DT_OPEX.Rows(i).Item("Cost_perUnit").ToString), CDbl(DT_OPEX.Rows(i).Item("Initial_Cost_perUnit").ToString), CustomerType) Then
+                r += "<td align='left' style='color: Red'>" + DT_OPEX.Rows(i).Item("OPEX_Name").ToString + "</td>"
+                r += "<td align='center' style='color: Red'>" + Format(CDbl(DT_OPEX.Rows(i).Item("Number").ToString), "###,##0") + "</td>"
+                r += "<td align='right' style='color: Red'>" + Format(CDbl(DT_OPEX.Rows(i).Item("Cost").ToString), "###,##0.00") + "</td>"
+            Else
+                r += "<td align='left'>" + DT_OPEX.Rows(i).Item("OPEX_Name").ToString + "</td>"
+                r += "<td align='center'>" + Format(CDbl(DT_OPEX.Rows(i).Item("Number").ToString), "###,##0") + "</td>"
+                r += "<td align='right'>" + Format(CDbl(DT_OPEX.Rows(i).Item("Cost").ToString), "###,##0.00") + "</td>"
+            End If
+            r += "</tr>"
+            total_opex += DT_OPEX.Rows(i).Item("Cost")
+        Next
+
+        r += "<tr>"
+        r += "<td align='left'><b><u>Total Cost</u></b></td>"
+        r += "<td></td>"
+        r += "<td align='right'><b><u>" + Format(CDbl(total_opex.ToString), "###,##0.00") + "</u></b></td>"
+        r += "</tr>"
+
+
+        r += "<tr Style = 'height: 15px'><td></td><td></td><td></td></tr>"
+
+        If Menu = "Create" Then
+            strsql = "select * from dbo.List_OTHER where CreateBy='" + User + "' and Document_No is null "
+        Else
+            strsql = "select * from dbo.List_OTHER where Document_No = '" + DocNo + "' and Status = '1' "
+        End If
+
+        DT_OTHER = C.GetDataTable(strsql)
+        r += "<tr class='font-weight-bold'>"
+        r += "<td align='left'><u>OTHER</u></td>"
+        r += "<td align='center'><u>หน่วย<u></td>"
+        r += "<td align='right'><u>บาท/เดือน<u></td>"
+        r += "</tr>"
+        For i As Integer = 0 To DT_OTHER.Rows.Count - 1
+            r += "<tr>"
+            If CalculateOverMinMax(CDbl(DT_OTHER.Rows(i).Item("Cost_perUnit").ToString), CDbl(DT_OTHER.Rows(i).Item("Initial_Cost_perUnit").ToString), CustomerType) Then
+                r += "<td align='left'  style='color: Red'>" + DT_OTHER.Rows(i).Item("OTHER_Name").ToString + "</td>"
+                r += "<td align='center'  style='color: Red'>" + Format(CDbl(DT_OTHER.Rows(i).Item("Number").ToString), "###,##0") + "</td>"
+                r += "<td align='right'  style='color: Red'>" + Format(CDbl(DT_OTHER.Rows(i).Item("Cost").ToString), "###,##0.00") + "</td>"
+            Else
+                r += "<td align='left'>" + DT_OTHER.Rows(i).Item("OTHER_Name").ToString + "</td>"
+                r += "<td align='center'>" + Format(CDbl(DT_OTHER.Rows(i).Item("Number").ToString), "###,##0") + "</td>"
+                r += "<td align='right'>" + Format(CDbl(DT_OTHER.Rows(i).Item("Cost").ToString), "###,##0.00") + "</td>"
+            End If
+            r += "</tr>"
+            total_other += DT_OTHER.Rows(i).Item("Cost")
+        Next
+        r += "<tr>"
+        r += "<td align='left'><b><u>Total Cost</u></b></td>"
+        r += "<td></td>"
+        r += "<td align='right'><b><u>" + Format(CDbl(total_other.ToString), "###,##0.00") + "</u></b></td>"
+        r += "</tr>"
+
+        r += "<tr Style = 'height: 15px'><td></td><td></td><td></td></tr>"
+
+        If Menu = "Create" Then
+            strsql = "select * from dbo.List_Management where CreateBy='" + User + "' and Document_No is null "
+        Else
+            strsql = "select * from dbo.List_Management where Document_No = '" + DocNo + "' and Status = '1' "
+        End If
+
+        DT_Management = C.GetDataTable(strsql)
+        r += "<tr class='font-weight-bold'>"
+        r += "<td align='left'><u>Management</u></td>"
+        r += "<td align='center'><u>หน่วย<u></td>"
+        r += "<td align='right'><u>บาท/เดือน<u></td>"
+        r += "</tr>"
+        r += "<tr>"
+        r += "<td align='left'>ค่าบริการ NOC</td>"
+        'r += "<td align='center'>" + Format(CDbl(DT_Service.Rows(0).Item("NOC")), "###,##0") + "</td>"
+        r += "<td align='right'>" + Format(CDbl(NOCTotalCost), "###,##0.00") + "</td>"
+        r += "</tr>"
+        total_management += CDbl(NOCTotalCost)
+
+        For i As Integer = 0 To DT_Management.Rows.Count - 1
+            r += "<tr>"
+            If CalculateOverMinMax(CDbl(DT_Management.Rows(i).Item("Cost_perUnit").ToString), CDbl(DT_Management.Rows(i).Item("Initial_Cost_perUnit").ToString), CustomerType) Then
+                r += "<td align='left'  style='color: Red'>" + DT_Management.Rows(i).Item("Management_Name").ToString + "</td>"
+                r += "<td align='center'  style='color: Red'>" + Format(CDbl(DT_Management.Rows(i).Item("Number").ToString), "###,##0") + "</td>"
+                r += "<td align='right'  style='color: Red'>" + Format(CDbl(DT_Management.Rows(i).Item("Cost").ToString), "###,##0.00") + "</td>"
+            Else
+                r += "<td align='left'>" + DT_Management.Rows(i).Item("Management_Name").ToString + "</td>"
+                r += "<td align='center'>" + Format(CDbl(DT_Management.Rows(i).Item("Number").ToString), "###,##0") + "</td>"
+                r += "<td align='right'>" + Format(CDbl(DT_Management.Rows(i).Item("Cost").ToString), "###,##0.00") + "</td>"
+            End If
+            r += "</tr>"
+            total_management += DT_Management.Rows(i).Item("Cost")
+        Next
+        r += "<tr>"
+        r += "<td align='left'><b><u>Total Cost</u></b></td>"
+        r += "<td></td>"
+        r += "<td align='right'><b><u>" + Format(CDbl(total_management.ToString), "###,##0.00") + "</u></b></td>"
+        r += "</tr>"
+
+        r += "</table>"
+
+        'OPEX_Detail.InnerHtml = r
+
+        'lblNOCTotalCost.Text = total_management
+        'lblTotalCAPEX.Text = Format(CDbl(total_capex.ToString), "###,##0.00")
+        'lblTotalOPEX.Text = Format(CDbl(total_opex.ToString), "###,##0.00")
+        'lblTotalOTHER.Text = Format(CDbl(total_other.ToString), "###,##0.00")
+        'lblTotalManagement.Text = Format(CDbl(total_management.ToString), "###,##0.00")
+
+        Dim totalopex_all = total_opex + total_other + total_management
+        'lblTotalOPEXALL.Text = Format(CDbl(totalopex_all.ToString), "###,##0.00")
+
+        'lblUtil.Text = "Util." & DT_Service.Rows(0).Item("INLUtilization").ToString & "%"
+
+        Dim dt As New DataTable
+        dt.Columns.Add("ID", GetType(Integer))
+        dt.Columns.Add("TotalCapex", GetType(Double))
+        dt.Columns.Add("TotalOpex", GetType(Double))
+        dt.Columns.Add("TotalOther", GetType(Double))
+        dt.Columns.Add("TotalManagement", GetType(Double))
+        dt.Columns.Add("TotalOpexAll", GetType(Double))
+        dt.Columns.Add("Utilize", GetType(String))
+        Dim N As Integer = dt.Columns("ID").AutoIncrement
+        'dt.Rows.Add(N, total_capex, total_opex, total_other, total_management, totalopex_all, "Util." & DT_Service.Rows(0).Item("INLUtilization").ToString & "%")
+
+        Return dt
+    End Function
+
+    Public Function ShowService(ByVal User As String, ByVal Menu As String, ByVal DocNo As String, ByVal DT_ProjectName As DataTable, ByVal DT_Service As DataTable, ByVal Contract As Integer, ByVal MonthlyPrice As Double, ByVal OneTimePayment As Double, ByVal TotalCapex As Double, ByVal TotalOpex As Double, ByVal TotalOther As Double, ByVal TotalManagement As Double) As DataTable
+        Dim dt As New DataTable
+        If DT_Service.Rows.Count > 0 Then
+            ' Define money format.
+            Dim MoneyFmt As String = "###,##0.00"
+            Dim MoneyRoundup As String = "###,##0"
+            ' Define percentage format.
+            Dim PercentFmt As String = "#0.00"
+
+            Dim MKTCost As Double
+            Dim RevenueOneTime As Double
+            Dim MKTCostOneTime As Double
+            Dim Vas As Double = 0
+            Dim CashFlow As Double
+            Dim CashFlowOneTime As Double
+
+            Dim RevenueOne As Double
+            Dim RevenueNotOne As Double
+            Dim NetRevenueOne As Double
+            Dim NetRevenueNotOne As Double
+            Dim JasmineGroup As Double = 0
+            Dim Other As Double = 0
+            Dim CAPEXCorp As Double = 0
+            Dim CAPEXMass As Double = 0
+            Dim MKTCostOne As Double
+            Dim MKTCostNotOne As Double
+            Dim Budget1per As Double
+            Dim GiftPrice As Double
+            Dim CostOfInternet As Double
+            Dim DomesticCost As Double
+            Dim InternationalCost As Double
+            Dim Caching As Double
+            Dim CostOfNetwork As Double
+
+            Dim NetworkCost As Double
+            Dim PortCost As Double
+            Dim PenaltyOne As Double
+            Dim PenaltyNotOne As Double
+            Dim OPEXOne As Double
+            Dim OPEXNotOne As Double
+            Dim RevenueAfterOperationOne As Double
+            Dim RevenueAfterOperationNotOne As Double
+            Dim CashFlowOne As Double
+            Dim CashFlowNotOne As Double
+            Dim PaybackSum As Double
+            Dim SparePart As Double
+            Dim SparePartPercent As Double = 0.01
+
+            Dim Revenue As Double
+            Dim Revenue_Profit As Double
+            Dim RevenuePercent As String
+            Dim OPEX As Double
+            Dim OPEX_Profit As Double
+            Dim MarketingCost As Double
+            Dim MarketingCost_Profit As Double
+            Dim InternetBandwidthCost As Double
+            Dim NetworkBandwidthCost As Double
+            Dim NOCCost As Double
+            Dim JasmineGroupCost As Double
+            Dim OtherCost As Double
+            Dim OtherCost_Profit As Double
+            Dim OtherPercent As String
+            Dim PenaltyCost As Double
+            Dim PenaltyCost_Profit As Double
+            Dim RevenueAfter As Double
+            Dim RevenueAfter_Profit As Double
+            Dim CAPEX As Double
+            Dim CAPEX_Profit As Double
+            Dim CAPEXPercent As String
+            Dim CashFlowTotal As Double
+            Dim CashFlowTotal_Profit As Double
+            Dim Payback As String
+            Dim Payback_Profit As String
+            Dim Margin As String
+            Dim Margin_Profit As String
+            Dim NPVTotal As String
+            Dim NPVTotal_Profit As String
+
+
+
+            RevenueOne = MonthlyPrice + OneTimePayment
+            RevenueNotOne = MonthlyPrice
+
+            MKTCostOne = ((CDbl(DT_ProjectName.Rows(0).Item("Marketing").ToString) / 100) * RevenueOne) + ((CDbl(DT_ProjectName.Rows(0).Item("EntertainCustomer").ToString) / 100) * RevenueOne) + CDbl(DT_ProjectName.Rows(0).Item("Gift").ToString)
+            MKTCostNotOne = ((CDbl(DT_ProjectName.Rows(0).Item("Marketing").ToString) / 100) * RevenueNotOne) + ((CDbl(DT_ProjectName.Rows(0).Item("EntertainCustomer").ToString) / 100) * RevenueNotOne)
+
+            DomesticCost = Math.Ceiling(CDbl(DT_Service.Rows(0).Item("Domestic").ToString) * (CDbl(DT_Service.Rows(0).Item("INLUtilization").ToString) / 100) * CDbl(DT_Service.Rows(0).Item("DomesticCost").ToString))
+            InternationalCost = Math.Ceiling(CDbl(DT_Service.Rows(0).Item("DirectTraffic").ToString) * CDbl(DT_Service.Rows(0).Item("TransitCost").ToString))
+            Caching = Math.Ceiling(CDbl(DT_Service.Rows(0).Item("Caching").ToString) * CDbl(DT_Service.Rows(0).Item("AllInternationalCost").ToString))
+            CostOfInternet = DomesticCost + InternationalCost + Caching
+
+            PortCost = Math.Ceiling(CDbl(DT_Service.Rows(0).Item("NetWorkPort").ToString) * CDbl(DT_Service.Rows(0).Item("NetWorkPortCost").ToString))
+            NetworkCost = Math.Ceiling(CDbl(DT_Service.Rows(0).Item("EthernetNetwork").ToString) * (CDbl(DT_Service.Rows(0).Item("NetworkUtilization").ToString) / 100) * CDbl(DT_Service.Rows(0).Item("NetworkCost").ToString))
+            CostOfNetwork = PortCost + NetworkCost
+
+            JasmineGroup = TotalOpex
+            PenaltyOne = CDbl(DT_ProjectName.Rows(0).Item("PenaltyLate").ToString) + ((CDbl(DT_ProjectName.Rows(0).Item("Penalty").ToString) / 100) * RevenueOne)
+            PenaltyNotOne = (CDbl(DT_ProjectName.Rows(0).Item("Penalty").ToString) / 100) * RevenueNotOne
+
+            OPEXOne = MKTCostOne + CostOfInternet + CostOfNetwork + JasmineGroup + TotalOther + TotalManagement + PenaltyOne
+            OPEXNotOne = MKTCostNotOne + CostOfInternet + CostOfNetwork + JasmineGroup + TotalOther + TotalManagement + PenaltyNotOne
+
+
+            RevenueAfterOperationOne = RevenueOne - OPEXOne
+            RevenueAfterOperationNotOne = RevenueNotOne - OPEXNotOne
+
+            CashFlowOne = RevenueAfterOperationOne - TotalCapex
+            CashFlowNotOne = RevenueAfterOperationNotOne
+
+            Dim CashFlowPeriod(Contract) As Double
+            Dim PaybackPeriod(Contract) As Double
+
+            For i As Integer = 0 To CashFlowPeriod.Length - 1
+                If i = 0 Then
+                    CashFlowPeriod(i) = CashFlowOne
+                Else
+                    CashFlowPeriod(i) = CashFlowNotOne + CashFlowPeriod(i - 1)
+                End If
+            Next
+
+            If (RevenueAfterOperationOne + OneTimePayment) >= TotalCapex Then
+                Payback = "<=1"
+            Else
+                For i As Integer = 0 To PaybackPeriod.Length - 1
+                    If i = 0 Then
+                        PaybackPeriod(i) = 1
+                    Else
+                        If CashFlowPeriod(i) < 0 Then
+                            PaybackPeriod(i) = 1
+                        Else
+                            If CashFlowPeriod(i - 1) < 0 Then
+                                PaybackPeriod(i) = (CashFlowPeriod(i - 1) * (-1)) / CashFlowNotOne
+                            Else
+                                PaybackPeriod(i) = 0
+                            End If
+                        End If
+                    End If
+                Next
+                PaybackSum = 0
+                For i As Integer = 0 To Contract - 1
+                    PaybackSum = PaybackSum + PaybackPeriod(i)
+                Next
+                Payback = Format(PaybackSum, MoneyFmt)
+            End If
+
+
+
+            Revenue = RevenueOne + (RevenueNotOne * (Contract - 1))
+            Dim Revenue_total = RevenueOne + (RevenueNotOne * (Contract - 1))
+            Revenue_Profit = Revenue_total
+            RevenuePercent = "100%"
+
+
+            OPEX = OPEXOne + (OPEXNotOne * (Contract - 1))
+
+            MarketingCost = MKTCostOne + (MKTCostNotOne * (Contract - 1))
+            MarketingCost_Profit = MKTCostOne + (MKTCostNotOne * (Contract - 1))
+            InternetBandwidthCost = CostOfInternet * Contract
+            NetworkBandwidthCost = CostOfNetwork * Contract
+            NOCCost = TotalManagement * Contract
+            PenaltyCost = PenaltyOne + (PenaltyNotOne * (Contract - 1))
+            PenaltyCost_Profit = Format(PenaltyOne + (PenaltyNotOne * (Contract - 1)), MoneyRoundup)
+            JasmineGroupCost = JasmineGroup * Contract
+
+            OtherCost = TotalOther * Contract
+            OtherCost_Profit = TotalOther * Contract
+            OtherPercent = Format((OtherCost / Revenue) * 100, PercentFmt) & "%"
+
+            Dim OPEX_total = (MKTCostOne + (MKTCostNotOne * (Contract - 1))) + OtherCost_Profit + PenaltyCost_Profit
+            OPEX_Profit = OPEX_total
+
+            Dim Revenue_Operation As Double = (RevenueOne + (RevenueNotOne * (Contract - 1))) - (OPEXOne + (OPEXNotOne * (Contract - 1)))
+            RevenueAfter = Revenue_Operation
+            Dim Revenue_Operationtotal As Double = Revenue_total - OPEX_total
+            RevenueAfter_Profit = Revenue_Operationtotal
+
+            CAPEX = TotalCapex
+            CAPEX_Profit = TotalCapex
+            CAPEXPercent = Format((CAPEX / Revenue) * 100, PercentFmt) & "%"
+
+            CashFlow = Revenue_Operation - TotalCapex
+            Dim CashFlow_total As Double = Revenue_Operationtotal - TotalCapex
+            CashFlowTotal = CDbl(CashFlow.ToString)
+            CashFlowTotal_Profit = CDbl(CashFlow_total.ToString)
+
+            Dim values(Contract) As Double
+            For i As Integer = 0 To Contract - 1
+                If i = 0 Then
+                    values(i) = CashFlowOne ' Format(CashFlowOne, MoneyRoundup)
+                Else
+                    values(i) = CashFlowNotOne 'Format(CashFlowNotOne, MoneyRoundup)
+                End If
+            Next
+            Dim FixedRetRate As Double = 0.05
+            ' Calculate net present value.
+            Dim NetPVal As Double = NPV(FixedRetRate / 12, values)
+            NPVTotal = Format(NetPVal, MoneyFmt)
+            If NetPVal <> 0 Then
+                Margin = Format((CDbl(NPVTotal) / Revenue) * 100, PercentFmt).ToString
+            Else
+                Margin = "0"
+            End If
+
+            '/////////////  Marginal Profit ///////////////////
+
+            Dim OPEXProfitOne As Double
+            Dim OPEXProfitNotOne As Double
+            Dim RevenueAfterOperationProfitOne As Double
+            Dim RevenueAfterOperationProfitNotOne As Double
+            Dim CashFlowProfitOne As Double
+            Dim CashFlowProfitnotOne As Double
+            Dim PaybackProfitSum As Double
+
+            OPEXProfitOne = MKTCostOne + TotalOther + PenaltyOne
+            OPEXProfitNotOne = MKTCostNotOne + TotalOther + PenaltyNotOne
+            RevenueAfterOperationProfitOne = RevenueOne - OPEXProfitOne
+            RevenueAfterOperationProfitNotOne = RevenueNotOne - OPEXProfitNotOne
+
+            CashFlowProfitOne = RevenueAfterOperationProfitOne - TotalCapex
+            CashFlowProfitnotOne = RevenueAfterOperationProfitNotOne
+
+            Dim CashFlowProfitPeriod(Contract) As Double
+            Dim PaybackProfitPeriod(Contract) As Double
+
+            For i As Integer = 0 To CashFlowProfitPeriod.Length - 1
+                If i = 0 Then
+                    CashFlowProfitPeriod(i) = CashFlowProfitOne
+                Else
+                    CashFlowProfitPeriod(i) = CashFlowProfitnotOne + CashFlowProfitPeriod(i - 1)
+                End If
+            Next
+
+            If RevenueAfterOperationProfitOne >= TotalCapex Then
+                Payback_Profit = "<=1"
+            Else
+                For i As Integer = 0 To PaybackProfitPeriod.Length - 1
+                    If i = 0 Then
+                        PaybackProfitPeriod(i) = 1
+                    Else
+                        If CashFlowProfitPeriod(i) < 0 Then
+                            PaybackProfitPeriod(i) = 1
+                        Else
+                            If CashFlowProfitPeriod(i - 1) < 0 Then
+                                PaybackProfitPeriod(i) = (CashFlowProfitPeriod(i - 1) * (-1)) / CashFlowProfitnotOne
+                            Else
+                                PaybackProfitPeriod(i) = 0
+                            End If
+                        End If
+                    End If
+                Next
+                PaybackProfitSum = 0
+                For i As Integer = 0 To Contract - 1
+                    PaybackProfitSum = PaybackProfitSum + PaybackProfitPeriod(i)
+                Next
+                Payback_Profit = Format(PaybackProfitSum, MoneyFmt)
+            End If
+
+            Dim valuesProfit(Contract) As Double
+            For i As Integer = 0 To Contract - 1
+                If i = 0 Then
+                    valuesProfit(i) = CashFlowProfitOne 'Format(CashFlowProfitOne, MoneyRoundup)
+                Else
+                    valuesProfit(i) = CashFlowProfitnotOne 'Format(CashFlowProfitnotOne, MoneyRoundup)
+                End If
+            Next
+
+            ' Calculate net present value.
+            Dim NetPValProfit As Double = NPV(FixedRetRate / 12, valuesProfit)
+            NPVTotal_Profit = Format(NetPValProfit, MoneyFmt)
+            If NetPValProfit <> 0 Then
+                Margin_Profit = Format((CDbl(NPVTotal_Profit) / Revenue) * 100, PercentFmt).ToString
+            Else
+                Margin_Profit = "0"
+            End If
+
+            dt.Columns.Add("ID", GetType(Integer))
+            dt.Columns.Add("Revenue", GetType(Double))
+            dt.Columns.Add("Revenue_Profit", GetType(Double))
+            dt.Columns.Add("RevenuePercent", GetType(String))
+            dt.Columns.Add("OPEX", GetType(Double))
+            dt.Columns.Add("OPEX_Profit", GetType(Double))
+            dt.Columns.Add("MarketingCost", GetType(Double))
+            dt.Columns.Add("MarketingCost_Profit", GetType(Double))
+            dt.Columns.Add("InternetCost", GetType(Double))
+            dt.Columns.Add("NetworkCost", GetType(Double))
+            dt.Columns.Add("NOCCost", GetType(Double))
+            dt.Columns.Add("JasmineGroupCost", GetType(Double))
+            dt.Columns.Add("OtherCost", GetType(Double))
+            dt.Columns.Add("OtherCost_Profit", GetType(Double))
+            dt.Columns.Add("OtherPercent", GetType(String))
+            dt.Columns.Add("PenaltyCost", GetType(Double))
+            dt.Columns.Add("PenaltyCost_Profit", GetType(Double))
+            dt.Columns.Add("RevenueAfter", GetType(Double))
+            dt.Columns.Add("RevenueAfter_Profit", GetType(Double))
+            dt.Columns.Add("CAPEX", GetType(Double))
+            dt.Columns.Add("CAPEX_Profit", GetType(Double))
+            dt.Columns.Add("CAPEXPercent", GetType(Double))
+            dt.Columns.Add("CashFlow", GetType(Double))
+            dt.Columns.Add("CashFlow_Profit", GetType(Double))
+            dt.Columns.Add("Payback", GetType(String))
+            dt.Columns.Add("Payback_Profit", GetType(Double))
+            dt.Columns.Add("Margin", GetType(Double))
+            dt.Columns.Add("Margin_Profit", GetType(Double))
+            dt.Columns.Add("NPV", GetType(Double))
+            dt.Columns.Add("NPV_Profit", GetType(Double))
+            Dim N As Integer = dt.Columns("ID").AutoIncrement
+            dt.Rows.Add(N, Revenue, Revenue_Profit, RevenuePercent, OPEX, OPEX_Profit, MarketingCost, MarketingCost_Profit, InternetBandwidthCost, NetworkBandwidthCost, NOCCost, JasmineGroupCost, OtherCost, OtherCost_Profit, OtherPercent, PenaltyCost, PenaltyCost_Profit, RevenueAfter, RevenueAfter_Profit, CAPEX, CAPEX_Profit, CAPEXPercent, CashFlowTotal, CashFlowTotal_Profit, Payback, Payback_Profit, Margin, Margin_Profit, NPVTotal, NPVTotal_Profit)
+        End If
+
+        Return dt
+    End Function
+
+End Class
